@@ -2,8 +2,8 @@ name: taxi_rides_hourly_features_pipeline
 
 on:
   schedule:
-    - cron: '2 * * * *' # Runs every hour
-  workflow_dispatch: # Allows manual triggering of the workflow
+    - cron: '2 * * * *'  # Runs every hour
+  workflow_dispatch:      # Allows manual triggering of the workflow
 
 jobs:
   run-python-script:
@@ -16,14 +16,23 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.11' # Specify the Python version
+          python-version: '3.11'  # Specify the Python version
 
-      - name: Upgrade pip and install dependencies
+      - name: Install latest librdkafka from Confluent repository
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y wget software-properties-common
+          wget -qO - https://packages.confluent.io/deb/7.4/archive.key | sudo apt-key add -
+          sudo add-apt-repository "deb [arch=amd64] https://packages.confluent.io/deb/7.4 stable main"
+          sudo apt-get update && sudo apt-get install -y librdkafka-dev
+
+      - name: Install dependencies with confluent-kafka from Confluent index
         run: |
           python -m pip install --upgrade pip
           pip install --upgrade setuptools wheel
-          pip install confluent-kafka --index-url https://pypi.confluent.io/simple
-          pip install -r requirements_feature_pipeline.txt # Install dependencies from requirements file
+          # Install confluent-kafka from Confluent's extra index to get precompiled wheels
+          pip install confluent-kafka --extra-index-url https://packages.confluent.io/pypi/simple
+          pip install -r requirements_feature_pipeline.txt
 
       - name: Run new data fetch pipeline and load to hopsworks
         env:
