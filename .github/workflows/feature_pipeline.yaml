@@ -18,6 +18,9 @@ jobs:
         with:
           python-version: '3.11' # Specify the Python version
 
+      - name: Install librdkafka
+        run: sudo apt-get update && sudo apt-get install -y librdkafka-dev
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
