@@ -35,7 +35,7 @@ jobs:
           pip install --only-binary :all: confluent-kafka --extra-index-url https://packages.confluent.io/pypi/simple || true
           # If the above fails, you may consider pinning to an older version (uncomment the next line)
           # pip install confluent-kafka==2.7.0 --extra-index-url https://packages.confluent.io/pypi/simple
-          pip install -r requirements_feature_pipeline.txt
+          pip install -r requirements_pipeline.txt
 
       - name: Run new data fetch pipeline and load to hopsworks
         env:
